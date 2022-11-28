@@ -17,7 +17,7 @@ mongoose.connect(MONGO_URL);
 
 const app = express();
 
-router.use(cors({
+app.use(cors({
   exposedHeaders: '*',
 }));
 
