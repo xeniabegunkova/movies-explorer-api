@@ -1,16 +1,11 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { cors } = require('cors');
 
 const { createUser, login } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 
 const NotFound = require('../errors/NotFound');
 const { ALERT_MESSAGE } = require('../utils/constants');
-
-router.use(cors({
-  exposedHeaders: '*',
-}));
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
