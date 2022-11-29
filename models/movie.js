@@ -10,7 +10,7 @@ const movieSchema = new mongoose.Schema({
     required: [true, 'Required field to fill in'],
   },
   duration: {
-    type: String,
+    type: Number,
     required: [true, 'Required field to fill in'],
   },
   year: {

@@ -10,6 +10,7 @@ const {
 const NotFound = require('../errors/NotFound');
 const Conflict = require('../errors/Conflict');
 const BadReq = require('../errors/BadRequest');
+const UnauthorizedError = require('../errors/Unauthorized');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -64,7 +65,15 @@ const updateUser = (req, res, next) => {
     },
   ).orFail(new NotFound(ALERT_MESSAGE.ID_NOT_FOUND))
     .then((user) => res.send({ data: user }))
-    .catch(next);
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new Conflict(ALERT_MESSAGE.EXISTING_EMAIL));
+      } else if (err.name === 'ValidationError') {
+        next(new BadReq(ALERT_MESSAGE.GET_USER_ERROR));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // information about user
@@ -88,19 +97,20 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
     .then((user) => {
-      bcrypt.compare(password, user.password)
-        .then(() => {
+      if (!user) {
+        throw new UnauthorizedError(ALERT_MESSAGE.ERROR_AUTHORIZATION);
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new UnauthorizedError(ALERT_MESSAGE.ERROR_AUTHORIZATION);
+          }
           const token = jwt.sign(
             { _id: user._id },
             NODE_ENV === 'production' ? JWT_SECRET : 'secret-key',
             { expiresIn: '7d' },
           );
-          res.cookie('jwt', token, {
-            maxAge: 3600000 * 12 * 7,
-            httpOnly: true,
-            sameSite: true,
-          })
-            .send({ token });
+          res.send({ token });
         });
     })
     .catch(next);

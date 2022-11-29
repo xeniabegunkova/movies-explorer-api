@@ -8,10 +8,11 @@ const cors = require('cors');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const centralizedErrorHandling = require('./middlewares/centralizedErrorHandling');
-const router = require('./routes/index');
+const router = require('./routes');
 const limiter = require('./middlewares/rateLimiter');
+const { MONGO_URL } = require('./utils/baseUrl');
 
-const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/moviesdb' } = process.env;
+const { PORT = 3001 } = process.env;
 
 mongoose.connect(MONGO_URL);
 

@@ -17,34 +17,9 @@ const getMovies = (req, res, next) => {
 };
 
 const createMovies = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-  } = req.body;
-  const owner = req.user._id;
-
   Movies.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
+    ...req.body,
+    owner: req.user._id,
   })
     .then((movie) => {
       res.status(STATUS_CODES.WELL_DONE).send({ data: movie });
