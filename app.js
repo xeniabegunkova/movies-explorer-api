@@ -10,7 +10,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const centralizedErrorHandling = require('./middlewares/centralizedErrorHandling');
 const router = require('./routes');
 const limiter = require('./middlewares/rateLimiter');
-const { MONGO_URL } = require('./utils/baseUrl');
+const { MONGO_URL } = require('./utils/constants');
 
 const { PORT = 3001 } = process.env;
 
